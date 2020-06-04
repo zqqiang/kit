@@ -43,11 +43,14 @@ func New(consulAddr string, logger log.Logger) (profilesvc.Service, error) {
 		instancer = consul.NewInstancer(sdclient, logger, consulService, consulTags, passingOnly)
 		endpoints profilesvc.Endpoints
 	)
+	// interesting scope chain code organization
 	{
+		// factory is scope variable
 		factory := factoryFor(profilesvc.MakePostProfileEndpoint)
 		endpointer := sd.NewEndpointer(instancer, factory, logger)
 		balancer := lb.NewRoundRobin(endpointer)
 		retry := lb.Retry(retryMax, retryTimeout, balancer)
+		// finally update endpoints member
 		endpoints.PostProfileEndpoint = retry
 	}
 	{

@@ -36,6 +36,7 @@ func main() {
 		h = profilesvc.MakeHTTPHandler(s, log.With(logger, "component", "HTTP"))
 	}
 
+	// good example for signal using channel
 	errs := make(chan error)
 	go func() {
 		c := make(chan os.Signal)
@@ -43,6 +44,7 @@ func main() {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
+	// good example to run httpserver in goroutine
 	go func() {
 		logger.Log("transport", "HTTP", "addr", *httpAddr)
 		errs <- http.ListenAndServe(*httpAddr, h)
